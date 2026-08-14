@@ -1,0 +1,365 @@
+/* ============================================================
+   SECTIONS
+   Styles for individual portfolio sections, built on top of the
+   tokens/typography/animations/global foundation. One block per
+   section, clearly separated.
+   ============================================================ */
+
+/* ---------- About the Editor ---------- */
+
+.about-section {
+  position: relative;
+  padding-block: var(--space-10);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.about-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: var(--space-8);
+}
+
+/* Giant chapter numeral with a soft mirrored reflection beneath —
+   the "subtle 3D depth" cue for this section. */
+.about-number-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  transform: rotate(-3deg);
+}
+
+.about-number-stack {
+  line-height: 0.82;
+  text-align: center;
+}
+
+.about-number {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(6rem, 16vw, 12rem);
+  letter-spacing: var(--tracking-tight);
+}
+
+.about-number-reflection {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(6rem, 16vw, 12rem);
+  letter-spacing: var(--tracking-tight);
+  transform: scaleY(-1);
+  opacity: 0.16;
+  margin-top: -0.06em;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), transparent 65%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), transparent 65%);
+}
+
+.about-number-label {
+  color: var(--text-tertiary);
+}
+
+/* Glass content panel with a static soft reflective streak. */
+.glass-reflect {
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-reflect::before {
+  content: '';
+  position: absolute;
+  top: -60%;
+  left: -25%;
+  width: 55%;
+  height: 220%;
+  background: linear-gradient(
+    120deg,
+    transparent 20%,
+    var(--sheen-faint) 45%,
+    var(--sheen-soft) 50%,
+    var(--sheen-faint) 55%,
+    transparent 80%
+  );
+  transform: rotate(12deg);
+  pointer-events: none;
+}
+
+.about-panel {
+  padding: var(--space-7);
+  position: relative;
+}
+
+.about-eyebrow {
+  color: var(--text-accent);
+  margin-bottom: var(--space-4);
+}
+
+.about-name {
+  font-size: var(--text-3xl);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.about-role {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-5);
+}
+
+.about-lead {
+  color: var(--text-secondary);
+  max-width: 46ch;
+  margin-bottom: var(--space-6);
+}
+
+.about-list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--glass-border);
+}
+
+.about-list-item {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  padding-block: var(--space-4);
+  border-bottom: 1px solid var(--glass-border);
+  transition: border-color var(--duration-base) var(--ease-in-out-soft);
+}
+
+.about-list-item:hover {
+  border-bottom-color: var(--glass-border-accent);
+}
+
+.about-list-index {
+  flex-shrink: 0;
+  color: var(--text-accent);
+}
+
+.about-list-text {
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1024px) {
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-7);
+    text-align: center;
+  }
+
+  .about-number-wrap {
+    order: -1;
+  }
+
+  .about-lead {
+    max-width: none;
+    margin-inline: auto;
+  }
+
+  .about-list-item {
+    text-align: left;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-section {
+    padding-block: var(--space-8);
+  }
+
+  .about-panel {
+    padding: var(--space-5);
+  }
+
+  .about-number,
+  .about-number-reflection {
+    font-size: clamp(5rem, 28vw, 7rem);
+  }
+}
+
+/* ---------- What I Edit ---------- */
+
+.edit-section {
+  position: relative;
+  padding-block: var(--space-10);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.edit-header {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 640px;
+  margin-inline: auto;
+  margin-bottom: var(--space-9);
+}
+
+.edit-eyebrow {
+  color: var(--text-accent);
+  margin-bottom: var(--space-4);
+}
+
+.edit-heading {
+  font-size: var(--text-4xl);
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.edit-subheading {
+  color: var(--text-secondary);
+}
+
+.edit-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-5);
+}
+
+/* Card frame — a thin chrome-gradient edge (via padding + gradient
+   background showing through) wrapping the glass surface. This is
+   the "chrome border" layer; the glass panel sits inside it. */
+.category-card-frame {
+  border-radius: var(--radius-lg);
+  padding: 1px;
+  background: linear-gradient(
+    155deg,
+    var(--sheen-strong) 0%,
+    var(--sheen-hairline) 35%,
+    var(--sheen-whisper) 60%,
+    var(--sheen-mid) 100%
+  );
+  height: 100%;
+  transform: perspective(900px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transition: transform var(--duration-fast) var(--ease-out-expo);
+}
+
+.category-card {
+  position: relative;
+  height: 100%;
+  padding: var(--space-6) var(--space-5);
+  border-radius: calc(var(--radius-lg) - 1px);
+  overflow: hidden;
+  cursor: default;
+  transition: box-shadow var(--duration-base) var(--ease-in-out-soft),
+    border-color var(--duration-base) var(--ease-in-out-soft);
+}
+
+.category-card:hover {
+  border-color: var(--glass-border-accent);
+  box-shadow: var(--shadow-elevation-3), var(--shadow-inset-glass), var(--shadow-glow-violet);
+}
+
+/* Cursor-tracked highlight, driven by --glow-x/--glow-y from useTilt */
+.category-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at var(--glow-x, 50%) var(--glow-y, 50%),
+    var(--accent-glow-mid),
+    transparent 55%
+  );
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-in-out-soft);
+  pointer-events: none;
+}
+
+.category-card:hover::after {
+  opacity: 1;
+}
+
+.category-card-index {
+  display: block;
+  color: var(--text-accent);
+  margin-bottom: var(--space-5);
+}
+
+.category-card-title {
+  font-size: var(--text-xl);
+  color: var(--chrome-200);
+  line-height: var(--leading-snug);
+  margin-bottom: var(--space-3);
+  letter-spacing: var(--tracking-tight);
+}
+
+.category-card-desc {
+  color: var(--text-tertiary);
+  line-height: var(--leading-relaxed);
+}
+
+.edit-closing {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  margin-top: var(--space-9);
+}
+
+.edit-closing-line {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--text-lg);
+  color: var(--text-secondary);
+}
+
+/* Vault CTA — built on GlassPanel's existing .glass/.glass-accent/
+   .glass-interactive primitives; only layout/typography added here. */
+.vault-cta-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-6);
+  padding: var(--space-3) var(--space-6);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.vault-cta-button:hover {
+  color: var(--text-accent);
+}
+
+/* Light theme only — dark theme keeps the translucent glass +
+   violet-border look above, completely untouched. Buttons get a
+   solid vibrant-orange fill with dark text per the light-theme
+   brief, distinct from the plain translucent-white-glass cards. */
+[data-theme='light'] .vault-cta-button {
+  background: linear-gradient(135deg, #ff9c4d, #ff6a00);
+  border-color: rgba(180, 70, 0, 0.4);
+  color: #17140f;
+  box-shadow: 0 8px 24px rgba(255, 122, 26, 0.35);
+}
+
+[data-theme='light'] .vault-cta-button:hover {
+  color: #17140f;
+  box-shadow: 0 10px 32px rgba(255, 122, 26, 0.55);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1024px) {
+  .edit-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .edit-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .edit-heading {
+    font-size: var(--text-3xl);
+  }
+
+  .category-card {
+    /* Tilt is mouse-driven only; flatten on touch layouts */
+    transform: none;
+  }
+}

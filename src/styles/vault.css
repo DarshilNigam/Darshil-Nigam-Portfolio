@@ -1,0 +1,451 @@
+/* ============================================================
+   THE VAULT — page-specific styles.
+   Built entirely on existing tokens/typography/glass/animation
+   system. Scoped to the Vault page and imported only there, so
+   it never touches the homepage bundle's visual output.
+   ============================================================ */
+
+.vault-page {
+  position: relative;
+  min-height: 100vh;
+  padding-bottom: var(--space-10);
+}
+
+/* ---------- Back to Home ---------- */
+
+.vault-back-link {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--space-6) auto 0;
+  padding: var(--space-2) var(--space-4);
+  width: fit-content;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.vault-back-link:hover {
+  color: var(--text-accent);
+  border-color: var(--glass-border-accent);
+}
+
+/* ---------- Hero ---------- */
+
+.vault-hero {
+  position: relative;
+  padding-block: var(--space-9) var(--space-8);
+  text-align: center;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.vault-heading {
+  position: relative;
+  z-index: 1;
+  font-size: var(--text-5xl);
+  font-weight: 600;
+  letter-spacing: var(--tracking-tight);
+}
+
+.vault-tagline {
+  position: relative;
+  z-index: 1;
+  margin-top: var(--space-3);
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* ---------- Filter nav ---------- */
+
+.vault-filters {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-7);
+  padding-inline: var(--space-4);
+}
+
+.filter-pill {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  transition: border-color var(--duration-base) var(--ease-in-out-soft),
+    color var(--duration-base) var(--ease-in-out-soft),
+    box-shadow var(--duration-base) var(--ease-in-out-soft);
+}
+
+.filter-pill:hover {
+  color: var(--text-secondary);
+  border-color: var(--chrome-600);
+}
+
+.filter-pill.active {
+  color: var(--text-accent);
+  border-color: var(--glass-border-accent);
+  box-shadow: var(--shadow-glow-violet);
+}
+
+/* ---------- Project grid ---------- */
+
+.vault-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-5);
+  margin-top: var(--space-8);
+}
+
+.project-card {
+  position: relative;
+  height: 100%;
+  padding: var(--space-4);
+  border-radius: calc(var(--radius-lg) - 1px);
+  text-align: left;
+  display: block;
+  width: 100%;
+}
+
+.project-card-media {
+  position: relative;
+  aspect-ratio: 9 / 16;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--surface-2) 0%, var(--surface-3) 50%, var(--surface-1) 100%);
+  border: 1px solid var(--chrome-800);
+}
+
+/* Diagonal placeholder texture instead of real media */
+.project-card-media::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    135deg,
+    var(--sheen-whisper) 0px,
+    var(--sheen-whisper) 2px,
+    transparent 2px,
+    transparent 14px
+  );
+  transition: transform var(--duration-slow) var(--ease-out-expo);
+}
+
+/* Simulated "preview" sweep on hover, standing in for real video */
+.project-card-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 30%,
+    rgba(138, 79, 255, 0.14) 48%,
+    var(--sheen-faint) 52%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  transition: transform var(--duration-cinematic) var(--ease-cinematic);
+}
+
+.project-card:hover .project-card-media::before {
+  transform: scale(1.06);
+}
+
+.project-card:hover .project-card-media::after {
+  transform: translateX(120%);
+}
+
+.project-card-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--glass-border-accent);
+  background: rgba(8, 8, 10, 0.55);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.85;
+  transition: opacity var(--duration-base) var(--ease-out-expo),
+    transform var(--duration-base) var(--ease-out-expo);
+}
+
+.project-card:hover .project-card-play {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.project-card-media-label {
+  position: absolute;
+  left: var(--space-3);
+  bottom: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  color: var(--chrome-500);
+  text-transform: uppercase;
+}
+
+.project-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--space-4);
+}
+
+.project-card-number {
+  color: var(--text-accent);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+}
+
+.project-card-category {
+  color: var(--chrome-500);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+}
+
+.project-card-title {
+  margin-top: var(--space-2);
+  font-size: var(--text-lg);
+  color: var(--chrome-200);
+  letter-spacing: var(--tracking-tight);
+}
+
+.vault-empty {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: var(--text-tertiary);
+  margin-top: var(--space-8);
+}
+
+/* ---------- Project detail overlay ---------- */
+
+.project-overlay-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  background: rgba(4, 4, 5, 0.72);
+  backdrop-filter: blur(16px) saturate(120%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+  overflow-y: auto;
+}
+
+.project-overlay-panel {
+  position: relative;
+  width: 100%;
+  max-width: 860px;
+  padding: var(--space-7);
+  margin-block: var(--space-6);
+}
+
+.project-overlay-back {
+  position: sticky;
+  top: var(--space-3);
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-full);
+  background: var(--glass-bg-elevated);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  border: 1px solid var(--glass-border);
+  width: fit-content;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  margin-bottom: var(--space-5);
+}
+
+.project-overlay-back:hover {
+  color: var(--text-accent);
+}
+
+.project-overlay-media {
+  aspect-ratio: 9 / 16;
+  max-height: 75vh; /* fallback for browsers without dvh support */
+  max-height: 75dvh; /* accounts for mobile browser chrome so the top of the video isn't cut off */
+  margin-inline: auto;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--surface-2) 0%, var(--surface-3) 50%, var(--surface-1) 100%);
+  border: 1px solid var(--chrome-800);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: var(--space-6);
+}
+
+/* When an actual video is present, its own natural aspect ratio
+   governs the visible size (bounded by the rules on
+   .project-overlay-video below) instead of the placeholder's forced
+   9:16 box — this is what guarantees nothing is ever cropped. */
+.project-overlay-media--has-video {
+  aspect-ratio: auto;
+  max-height: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2);
+}
+
+.project-overlay-video {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: calc(100vh - 140px); /* fallback for browsers without dvh support */
+  max-height: calc(100dvh - 140px); /* accounts for mobile browser chrome */
+  object-fit: contain;
+  cursor: pointer;
+}
+
+.project-overlay-media::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    135deg,
+    var(--sheen-whisper) 0px,
+    var(--sheen-whisper) 2px,
+    transparent 2px,
+    transparent 16px
+  );
+}
+
+/* Custom video controls — replaces native <video controls>, which
+   was disappearing unreliably. Always visible while the overlay is
+   open; no auto-hide timer. */
+.project-overlay-controls {
+  position: absolute;
+  left: var(--space-3);
+  bottom: var(--space-3);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-radius: var(--radius-full);
+  background: var(--glass-bg-elevated);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  border: 1px solid var(--glass-border);
+  width: fit-content;
+}
+
+.project-overlay-control-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  transition: color var(--duration-base) var(--ease-in-out-soft);
+}
+
+.project-overlay-control-btn:hover {
+  color: var(--text-accent);
+}
+
+.project-overlay-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.project-overlay-title {
+  font-size: var(--text-3xl);
+  color: var(--text-primary);
+}
+
+.project-overlay-category {
+  color: var(--text-accent);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.project-overlay-specs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+  padding-block: var(--space-5);
+  border-top: 1px solid var(--glass-border);
+  border-bottom: 1px solid var(--glass-border);
+  margin-bottom: var(--space-5);
+}
+
+.project-overlay-spec-label {
+  display: block;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  margin-bottom: var(--space-1);
+}
+
+.project-overlay-spec-value {
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+}
+
+.project-overlay-description {
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+  max-width: 60ch;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1024px) {
+  .vault-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .vault-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .vault-heading {
+    font-size: var(--text-4xl);
+  }
+
+  .project-overlay-panel {
+    padding: var(--space-5);
+  }
+
+  .project-overlay-specs {
+    grid-template-columns: 1fr;
+  }
+}

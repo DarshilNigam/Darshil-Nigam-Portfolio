@@ -1,0 +1,274 @@
+/* ============================================================
+   WHY WORK WITH ME / HIRE ME — page-specific styles.
+   Built entirely on existing tokens/typography/glass/animation
+   system. Scoped to this section and imported only where it's
+   used, so it never touches other pages' bundled output.
+   ============================================================ */
+
+.hire-section {
+  position: relative;
+  padding-block: var(--space-10);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* ---------- Header ---------- */
+
+.hire-header {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 680px;
+  margin-inline: auto;
+}
+
+.hire-eyebrow {
+  color: var(--text-accent);
+  margin-bottom: var(--space-4);
+}
+
+.hire-heading {
+  font-size: var(--text-4xl);
+  font-weight: 600;
+  letter-spacing: var(--tracking-tight);
+  margin-bottom: var(--space-4);
+}
+
+.hire-subheading {
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+}
+
+/* ---------- Specialty chips ---------- */
+
+.hire-specialties {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-7);
+  padding-inline: var(--space-4);
+}
+
+.specialty-chip {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-secondary);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+/* ---------- Credibility + Pricing ---------- */
+
+.hire-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5);
+  margin-top: var(--space-8);
+}
+
+.credibility-panel,
+.pricing-panel {
+  padding: var(--space-6);
+  height: 100%;
+}
+
+.credibility-title,
+.pricing-eyebrow {
+  color: var(--text-accent);
+  font-size: var(--text-xs);
+  margin-bottom: var(--space-5);
+}
+
+.credibility-title {
+  font-family: var(--font-mono);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+}
+
+.credibility-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.credibility-list li {
+  color: var(--chrome-200);
+  font-family: var(--font-heading);
+  font-size: var(--text-base);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.credibility-list li:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.pricing-eyebrow {
+  font-family: var(--font-mono);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+}
+
+.pricing-value {
+  font-size: var(--text-3xl);
+  font-weight: 600;
+  letter-spacing: var(--tracking-tight);
+  margin-bottom: var(--space-5);
+}
+
+.pricing-unit {
+  font-family: var(--font-heading);
+  font-size: var(--text-base);
+  color: var(--text-tertiary);
+}
+
+.pricing-bonus {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.pricing-bonus li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+.pricing-bonus li::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--violet-400);
+  flex-shrink: 0;
+}
+
+/* ---------- Target clients ---------- */
+
+.hire-targets {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  margin-top: var(--space-8);
+}
+
+.hire-targets-label {
+  color: var(--text-tertiary);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  margin-bottom: var(--space-4);
+}
+
+.target-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.target-chip {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--chrome-800);
+  color: var(--chrome-500);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+}
+
+/* ---------- CTA + contact ---------- */
+
+.hire-cta {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  margin-top: var(--space-9);
+}
+
+.start-project-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-7);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.start-project-button:hover {
+  color: var(--text-accent);
+}
+
+/* Light theme only — dark theme keeps the translucent glass +
+   violet-border look above, completely untouched. */
+[data-theme='light'] .start-project-button {
+  background: linear-gradient(135deg, #ff9c4d, #ff6a00);
+  border-color: rgba(180, 70, 0, 0.4);
+  color: #17140f;
+  box-shadow: 0 8px 24px rgba(255, 122, 26, 0.35);
+}
+
+[data-theme='light'] .start-project-button:hover {
+  color: #17140f;
+  box-shadow: 0 10px 32px rgba(255, 122, 26, 0.55);
+}
+
+.hire-contact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-6);
+}
+
+.hire-contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-wide);
+  text-decoration: underline;
+  text-decoration-color: var(--glass-border);
+  text-underline-offset: 4px;
+  transition: color var(--duration-base) var(--ease-in-out-soft),
+    text-decoration-color var(--duration-base) var(--ease-in-out-soft);
+}
+
+.hire-contact-link:hover {
+  color: var(--text-accent);
+  text-decoration-color: var(--text-accent);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1024px) {
+  .hire-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .hire-heading {
+    font-size: var(--text-3xl);
+  }
+
+  .pricing-value {
+    font-size: var(--text-2xl);
+  }
+}

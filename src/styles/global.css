@@ -1,0 +1,308 @@
+/* ============================================================
+   DARSHIL NIGAM — GLOBAL STYLES
+   Import order matters: tokens → typography → animations → global.
+   ============================================================ */
+
+@import './tokens.css';
+@import './typography.css';
+@import './animations.css';
+@import './sections.css';
+
+/* ---------- Reset ---------- */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button, input, textarea, select {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+/* ---------- Base surface: matte black with cinematic depth ---------- */
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: var(--surface-0);
+  /* Very faint radial falloff so the black reads as a lit stage
+     rather than a flat fill — barely perceptible, no visible edge. */
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% -10%, var(--accent-wash), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 100% 100%, rgba(255, 255, 255, 0.02), transparent 60%);
+  background-attachment: fixed;
+  overflow-x: hidden;
+  position: relative;
+}
+
+#root {
+  position: relative;
+  min-height: 100vh;
+  isolation: isolate;
+}
+
+/* ---------- Focus states ---------- */
+
+:focus-visible {
+  outline: 2px solid var(--violet-400);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* ---------- Selection ---------- */
+
+::selection {
+  background: var(--violet-glow-strong);
+  color: var(--text-primary);
+}
+
+/* ---------- Scrollbar (webkit) ---------- */
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--surface-0);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--chrome-800);
+  border-radius: var(--radius-full);
+  border: 2px solid var(--surface-0);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--chrome-700);
+}
+
+/* ============================================================
+   GLASSMORPHISM SYSTEM
+   .glass is the base primitive; modifiers layer on elevation,
+   accent border, and hover behavior. Keep blur values consistent
+   with tokens so every panel in the product reads as one material.
+   ============================================================ */
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-elevation-2), var(--shadow-inset-glass);
+}
+
+.glass-elevated {
+  background: var(--glass-bg-elevated);
+  box-shadow: var(--shadow-elevation-3), var(--shadow-inset-glass);
+}
+
+.glass-accent {
+  border-color: var(--glass-border-accent);
+  box-shadow: var(--shadow-elevation-2), var(--shadow-inset-glass), var(--shadow-glow-violet);
+}
+
+.glass-interactive {
+  transition: transform var(--duration-fast) var(--ease-out-expo),
+    box-shadow var(--duration-base) var(--ease-in-out-soft),
+    border-color var(--duration-base) var(--ease-in-out-soft);
+}
+
+.glass-interactive:hover {
+  border-color: var(--glass-border-accent);
+  box-shadow: var(--shadow-elevation-3), var(--shadow-inset-glass), var(--shadow-glow-violet);
+  transform: translateY(-2px);
+}
+
+/* ============================================================
+   FILM GRAIN
+   Full-viewport fixed overlay, SVG turbulence noise, low opacity,
+   overlay blend mode so it reads as texture rather than a filter
+   sitting on top. Animated via GrainOverlay component class.
+   ============================================================ */
+
+.grain-overlay {
+  position: fixed;
+  inset: -10%;
+  width: 120%;
+  height: 120%;
+  pointer-events: none;
+  z-index: var(--z-grain);
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain-shift 1s steps(6) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain-overlay {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   ATMOSPHERE GLOW
+   Backs the AtmosphereGlow component. Centered within whatever
+   `position: relative` ancestor it's placed in.
+   ============================================================ */
+
+.atmosphere-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, var(--glow-color) 0%, transparent 70%);
+  filter: blur(70px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ============================================================
+   SCROLL CUE
+   Backs the ScrollCue component. Fixed to the viewport, mounted
+   once at the router level, so it's present on every route.
+   ============================================================ */
+
+.scroll-cue {
+  position: fixed;
+  left: 50%;
+  bottom: var(--space-6);
+  transform: translateX(-50%);
+  z-index: var(--z-nav);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--duration-slow) var(--ease-cinematic);
+}
+
+.scroll-cue.is-visible {
+  opacity: 1;
+}
+
+.scroll-cue-line {
+  position: relative;
+  display: block;
+  width: 1px;
+  height: 44px;
+  background: linear-gradient(to bottom, transparent, var(--violet-400), transparent);
+  overflow: hidden;
+}
+
+.scroll-cue-line::after {
+  content: '';
+  position: absolute;
+  left: -1.5px;
+  top: -20%;
+  width: 4px;
+  height: 20%;
+  border-radius: var(--radius-full);
+  background: var(--violet-400);
+  box-shadow: 0 0 8px var(--violet-glow-strong);
+  animation: scroll-cue-drop 2.6s var(--ease-in-out-soft) infinite;
+}
+
+/* ============================================================
+   THEME TOGGLE
+   Backs the ThemeToggle component. Fixed top-right on every
+   route — the site's minimal persistent navigation element.
+   ============================================================ */
+
+.theme-toggle {
+  position: fixed;
+  top: var(--space-5);
+  right: var(--space-5);
+  z-index: var(--z-nav);
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+
+.theme-toggle:hover {
+  color: var(--text-accent);
+}
+
+.theme-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ============================================================
+   LAYOUT PRIMITIVES
+   ============================================================ */
+
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin-inline: auto;
+  padding-inline: var(--space-6);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding-inline: var(--space-4);
+  }
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.grid {
+  display: grid;
+}
+
+/* ---------- Responsive type/space scaffolding ----------
+   Global breakpoints — components should build on these rather
+   than introducing ad hoc widths. */
+
+/* sm: phones ≥480px */
+@media (min-width: 480px) { }
+
+/* md: tablets ≥768px */
+@media (min-width: 768px) { }
+
+/* lg: small desktops ≥1024px */
+@media (min-width: 1024px) { }
+
+/* xl: desktops ≥1280px */
+@media (min-width: 1280px) { }
+
+/* 2xl: wide desktops ≥1536px */
+@media (min-width: 1536px) { }

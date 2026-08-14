@@ -1,0 +1,241 @@
+/* ============================================================
+   DARSHIL NIGAM — DESIGN TOKENS
+   Dark cinematic luxury + futuristic editorial system.
+   Every color, space, and motion value in the product should
+   trace back to a variable defined here.
+   ============================================================ */
+
+:root {
+  /* Base surfaces — near-black with a cold, cinematic undertone
+     rather than a true neutral #000, so grain and chrome read
+     with more depth. */
+  --surface-0: #08080a;   /* page background */
+  --surface-1: #0e0e11;   /* raised panel base */
+  --surface-2: #16161a;   /* card / glass base */
+  --surface-3: #1e1e23;   /* hover / active surface */
+
+  /* ---------- Chrome / silver system ---------- */
+  /* Used for structural elements, dividers, secondary text,
+     and the metallic sheen on headlines. */
+  --chrome-100: #f5f6f8;  /* brightest specular highlight */
+  --chrome-200: #e2e4e8;
+  --chrome-300: #c7cbd1;
+  --chrome-400: #a6abb3;
+  --chrome-500: #83878f;  /* mid-tone silver, body-on-dark default */
+  --chrome-600: #5f6369;
+  --chrome-700: #43464b;
+  --chrome-800: #2b2d31;  /* hairline borders */
+  --chrome-900: #1a1b1e;  /* deep steel, near-surface */
+
+  /* Chrome gradient — for the metallic text/edge treatment.
+     Two bright bands (like light passing across brushed steel)
+     give more perceived contrast against matte black than a
+     single soft highlight does. */
+  --chrome-gradient: linear-gradient(
+    115deg,
+    var(--chrome-700) 0%,
+    var(--chrome-300) 18%,
+    #ffffff 32%,
+    var(--chrome-200) 44%,
+    #ffffff 56%,
+    var(--chrome-400) 72%,
+    var(--chrome-700) 100%
+  );
+
+  /* ---------- Electric violet accent ---------- */
+  /* Used sparingly: focus states, one live accent per view,
+     ambient glow. Never as a base fill for large areas. */
+  --violet-500: #8a4fff;  /* core accent */
+  --violet-400: #a476ff;  /* hover / lighter */
+  --violet-600: #6e33e0;  /* pressed / deeper */
+  --violet-glow-soft: rgba(138, 79, 255, 0.18);
+  --violet-glow-strong: rgba(138, 79, 255, 0.45);
+
+  /* ---------- Text ---------- */
+  --text-primary: #f2f2f4;
+  --text-secondary: var(--chrome-400);
+  --text-tertiary: var(--chrome-600);
+  --text-accent: var(--violet-400);
+
+  /* ---------- Glassmorphism ---------- */
+  --glass-bg: rgba(255, 255, 255, 0.035);
+  --glass-bg-elevated: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.09);
+  --glass-border-accent: rgba(138, 79, 255, 0.35);
+  --glass-blur: 20px;
+  --glass-saturation: 140%;
+
+  /* ---------- Sheen tokens ----------
+     Decorative highlight stops used in card frames, reflective
+     streaks, and placeholder media textures. Kept as tokens (rather
+     than literal white) so the light theme can flip them to a dark
+     tint and those elements stay visible against a light surface. */
+  --sheen-strong: rgba(255, 255, 255, 0.32);
+  --sheen-mid: rgba(255, 255, 255, 0.16);
+  --sheen-soft: rgba(255, 255, 255, 0.1);
+  --sheen-faint: rgba(255, 255, 255, 0.06);
+  --sheen-hairline: rgba(255, 255, 255, 0.04);
+  --sheen-whisper: rgba(255, 255, 255, 0.02);
+
+  /* Chrome text lift — the dark drop-shadow and edge stroke that
+     keep .text-chrome legible against its background. */
+  --chrome-text-stroke: rgba(255, 255, 255, 0.12);
+  --chrome-text-shadow: rgba(0, 0, 0, 0.75);
+
+  /* Small accent-colored glows used outside the main glass/shadow
+     system (page-level ambient wash, cursor-tracked card glow). */
+  --accent-wash: rgba(138, 79, 255, 0.06);
+  --accent-glow-mid: rgba(138, 79, 255, 0.14);
+
+  /* ---------- Spacing scale (4px base) ---------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+  --space-11: 12rem;
+
+  /* ---------- Radii ---------- */
+  --radius-sm: 6px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-xl: 32px;
+  --radius-full: 999px;
+
+  /* ---------- Shadows ---------- */
+  --shadow-elevation-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-elevation-2: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-elevation-3: 0 24px 64px rgba(0, 0, 0, 0.55);
+  --shadow-glow-violet: 0 0 40px var(--violet-glow-soft);
+  --shadow-glow-violet-strong: 0 0 60px var(--violet-glow-strong);
+  --shadow-inset-glass: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  /* ---------- Breakpoints (reference only — used in comments,
+       actual queries are hard-coded per CSS spec) ---------- */
+  --bp-sm: 480px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1280px;
+  --bp-2xl: 1536px;
+
+  /* ---------- Z-index scale ---------- */
+  --z-base: 0;
+  --z-panel: 10;
+  --z-overlay: 40;
+  --z-grain: 60;
+  --z-nav: 70;
+  --z-modal: 100;
+}
+
+/* ============================================================
+   LIGHT THEME
+   Same chrome/glass/violet language, re-tuned for a bright
+   surface. Dark theme above is the default and is untouched —
+   this block only takes effect when data-theme="light" is set
+   on <html> by the theme toggle. Every value here is either a
+   redefinition of an existing token (so components that already
+   consume tokens re-theme automatically) or a new value for a
+   token that has no sensible dark/light-agnostic default.
+   ============================================================ */
+
+/* ============================================================
+   LIGHT THEME
+   Premium orange + white luminous theme — warm ivory surfaces,
+   near-black text for readability, vibrant orange as the primary
+   accent (replacing violet everywhere it's used). Dark theme above
+   is the default and is untouched — this block only takes effect
+   when data-theme="light" is set on <html> by the theme toggle.
+   Every value here is either a redefinition of an existing token
+   (so components that already consume tokens re-theme automatically)
+   or a new value for a token that has no sensible dark/light-
+   agnostic default.
+   ============================================================ */
+
+:root[data-theme='light'] {
+  /* Surfaces — warm ivory, not stark white */
+  --surface-0: #fdf7f0;
+  --surface-1: #ffffff;
+  --surface-2: #fffaf4;
+  --surface-3: #f7ede0;
+
+  /* Chrome scale — mirrored AND warmed. Everything downstream that
+     already reads var(--chrome-N) (text colors, hairline borders,
+     the chrome/headline gradient) re-resolves correctly through
+     this one swap, with no per-component edits required. Darkest
+     stop is nudged further from mid-gray so anything using it as
+     body/label text clears a solid contrast margin against ivory. */
+  --chrome-100: #17140f;
+  --chrome-200: #2e2820;
+  --chrome-300: #473f34;
+  --chrome-400: #5c5348;
+  --chrome-500: #756a58;
+  --chrome-600: #8f8268;
+  --chrome-700: #cabfa8;
+  --chrome-800: #e8ddc9;
+  --chrome-900: #fdf7f0;
+
+  /* Text — --text-secondary/--text-tertiary are defined as
+     var(--chrome-400)/var(--chrome-600) at :root and inherit the
+     warmed scale above automatically (dark warm gray / lighter
+     warm gray); only the literal near-black primary needs
+     redeclaring, plus the accent pointing at the new orange scale. */
+  --text-primary: #17140f;
+  --text-accent: var(--violet-600);
+
+  /* Primary/secondary accent — vibrant orange + soft amber glow,
+     replacing violet everywhere it's referenced (buttons, borders,
+     focus rings, selection, scroll cue, shadows). */
+  --violet-500: #ff7a1a;
+  --violet-400: #ff9c4d;
+  --violet-600: #c2570a;
+  --violet-glow-soft: rgba(255, 140, 26, 0.16);
+  --violet-glow-strong: rgba(255, 122, 26, 0.42);
+  --glass-border-accent: rgba(255, 122, 26, 0.42);
+  --accent-wash: rgba(255, 140, 26, 0.05);
+  --accent-glow-mid: rgba(255, 122, 26, 0.18);
+
+  /* Glass — genuinely translucent WHITE (not dark-tinted) per the
+     "white glass, orange border" brief, with the default border
+     itself carrying a soft orange tint so every card — not only
+     accent-marked ones — reads as "white glass, orange edge." */
+  --glass-bg: rgba(255, 255, 255, 0.5);
+  --glass-bg-elevated: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 122, 26, 0.2);
+
+  /* Sheen — warm bronze/orange highlight stops for card frames and
+     reflective streaks, same positions and shape as dark theme,
+     recolored so the "chrome" trim reads as warm metal, not grey. */
+  --sheen-strong: rgba(194, 87, 10, 0.28);
+  --sheen-mid: rgba(194, 87, 10, 0.14);
+  --sheen-soft: rgba(194, 87, 10, 0.1);
+  --sheen-faint: rgba(194, 87, 10, 0.06);
+  --sheen-hairline: rgba(194, 87, 10, 0.035);
+  --sheen-whisper: rgba(194, 87, 10, 0.018);
+
+  /* Chrome text lift — stroke flips to a dark edge and the shadow
+     is lightened so it reads as lift, not smudge, on ivory. */
+  --chrome-text-stroke: rgba(0, 0, 0, 0.22);
+  --chrome-text-shadow: rgba(20, 15, 8, 0.28);
+
+  /* Chrome/headline gradient — explicitly overridden rather than
+     left to inherit the shared definition's hardcoded #ffffff
+     stops, which would nearly vanish against an ivory page. Warm
+     cream highlight bands plus vivid orange mid-bands instead, so
+     no stop in the sweep is ever close in value to the page bg. */
+  --chrome-gradient: linear-gradient(
+    115deg,
+    #362c1e 0%,
+    #d0630f 18%,
+    #ffe3bf 32%,
+    #8a5a2e 44%,
+    #ffe3bf 56%,
+    #d0630f 72%,
+    #362c1e 100%
+  );
+}
+

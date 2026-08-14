@@ -1,0 +1,147 @@
+/* ============================================================
+   DARSHIL NIGAM — ANIMATION FOUNDATION
+   Motion should feel like a cinema dissolve, not a UI bounce:
+   slow-in, slow-out, deliberate. Reserved for page-load reveals,
+   scroll entrances, hover micro-interactions, and ambient glow —
+   not decoration for its own sake.
+   ============================================================ */
+
+:root {
+  --ease-cinematic: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-soft: cubic-bezier(0.45, 0, 0.55, 1);
+
+  --duration-instant: 120ms;
+  --duration-fast: 220ms;
+  --duration-base: 420ms;
+  --duration-slow: 800ms;
+  --duration-cinematic: 1400ms;
+}
+
+/* ---------- Keyframes ---------- */
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-up-slow {
+  from { opacity: 0; transform: translateY(48px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Metallic sweep across chrome text/edges — the signature
+   "light pass over brushed steel" motion. */
+@keyframes chrome-sweep {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+/* Ambient violet pulse for glass panel edges / focus states */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 24px var(--violet-glow-soft); }
+  50% { box-shadow: 0 0 44px var(--violet-glow-strong); }
+}
+
+/* Film grain flicker — subtle frame-to-frame noise shift,
+   stepped rather than smooth so it reads as analog grain. */
+@keyframes grain-shift {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-1%, -2%); }
+  20% { transform: translate(-3%, 1%); }
+  30% { transform: translate(2%, -3%); }
+  40% { transform: translate(-2%, 3%); }
+  50% { transform: translate(3%, 1%); }
+  60% { transform: translate(-1%, 2%); }
+  70% { transform: translate(1%, -1%); }
+  80% { transform: translate(-3%, 2%); }
+  90% { transform: translate(2%, -2%); }
+}
+
+/* Ambient background glow — a soft violet field that breathes
+   behind hero/section typography. Opacity + scale only, so it
+   stays cheap and never causes layout shift. */
+@keyframes atmosphere-pulse {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.85; transform: translate(-50%, -50%) scale(1.08); }
+}
+
+/* Slow-glowing dot traveling down the scroll-cue line */
+@keyframes scroll-cue-drop {
+  0% { top: -20%; opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* ---------- Utility classes ---------- */
+
+.animate-fade-in {
+  animation: fade-in var(--duration-slow) var(--ease-cinematic) both;
+}
+
+.animate-fade-up {
+  animation: fade-up var(--duration-base) var(--ease-out-expo) both;
+}
+
+.animate-fade-up-slow {
+  animation: fade-up-slow var(--duration-cinematic) var(--ease-cinematic) both;
+}
+
+.animate-chrome-sweep {
+  animation: chrome-sweep 6s linear infinite;
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 4s var(--ease-in-out-soft) infinite;
+}
+
+.animate-atmosphere {
+  animation: atmosphere-pulse 8s var(--ease-in-out-soft) infinite;
+}
+
+/* Scroll-reveal utility — paired with useScrollReveal. Toggling
+   .is-visible (via JS) is what triggers the transition; the class
+   itself is inert until then. */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity var(--duration-slow) var(--ease-cinematic),
+    transform var(--duration-slow) var(--ease-cinematic);
+  transition-delay: var(--delay, 0ms);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger helper — pair with inline --delay custom property */
+[data-animate] {
+  animation-delay: var(--delay, 0ms);
+}
+
+/* Base interactive transition — apply to anything hoverable */
+.transition-base {
+  transition: transform var(--duration-fast) var(--ease-out-expo),
+    opacity var(--duration-fast) var(--ease-out-expo),
+    box-shadow var(--duration-base) var(--ease-in-out-soft),
+    border-color var(--duration-base) var(--ease-in-out-soft);
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

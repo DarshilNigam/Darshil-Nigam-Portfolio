@@ -1,0 +1,123 @@
+/* ============================================================
+   DARSHIL NIGAM — TYPOGRAPHY SYSTEM
+   Three roles, used with intention:
+
+   1. Display (Bodoni Moda)   — high-contrast editorial serif.
+      Reserved for the wordmark, hero statement, and pull quotes.
+      This is the "luxury editorial" voice — use sparingly.
+
+   2. Heading (Space Grotesk) — geometric, futuristic sans.
+      Section labels, nav, UI structure — the "futuristic" voice.
+
+   3. Body (Inter)            — neutral working sans for copy.
+
+   4. Mono (JetBrains Mono)   — timecodes, credits, metadata.
+      A nod to the editing-room register: SEQ_01, 00:00:24:12, etc.
+   ============================================================ */
+
+:root {
+  --font-display: 'Bodoni Moda', 'Didot', Georgia, serif;
+  --font-heading: 'Space Grotesk', 'Inter', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+
+  /* Fluid type scale — clamp(min, preferred, max) so the system
+     scales smoothly rather than snapping at breakpoints. */
+  --text-xs: clamp(0.7rem, 0.65rem + 0.15vw, 0.78rem);
+  --text-sm: clamp(0.82rem, 0.78rem + 0.15vw, 0.9rem);
+  --text-base: clamp(0.95rem, 0.9rem + 0.2vw, 1.05rem);
+  --text-lg: clamp(1.1rem, 1rem + 0.4vw, 1.3rem);
+  --text-xl: clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem);
+  --text-2xl: clamp(1.7rem, 1.4rem + 1.2vw, 2.4rem);
+  --text-3xl: clamp(2.2rem, 1.7rem + 2vw, 3.4rem);
+  --text-4xl: clamp(2.8rem, 2rem + 3.2vw, 4.8rem);
+  --text-5xl: clamp(3.4rem, 2.2rem + 4.8vw, 6.6rem);
+  --text-6xl: clamp(4rem, 2.4rem + 7vw, 9rem);
+
+  /* Tracking */
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.08em;
+  --tracking-wider: 0.16em;
+  --tracking-widest: 0.32em; /* used for the wordmark + eyebrow labels */
+
+  /* Line height */
+  --leading-tight: 1.05;
+  --leading-snug: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.75;
+}
+
+/* ---------- Base element mapping ---------- */
+
+body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, .font-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+
+h4, h5, h6, .font-heading {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-normal);
+}
+
+.font-mono,
+.eyebrow,
+.timecode {
+  font-family: var(--font-mono);
+  letter-spacing: var(--tracking-wide);
+}
+
+/* ---------- Utility type classes ---------- */
+
+.text-xs { font-size: var(--text-xs); }
+.text-sm { font-size: var(--text-sm); }
+.text-base { font-size: var(--text-base); }
+.text-lg { font-size: var(--text-lg); }
+.text-xl { font-size: var(--text-xl); }
+.text-2xl { font-size: var(--text-2xl); }
+.text-3xl { font-size: var(--text-3xl); }
+.text-4xl { font-size: var(--text-4xl); }
+.text-5xl { font-size: var(--text-5xl); }
+.text-6xl { font-size: var(--text-6xl); }
+
+/* Wordmark / eyebrow treatment — wide tracking, small caps feel,
+   the recurring "editorial label" motif used across the site. */
+.tracking-widest { letter-spacing: var(--tracking-widest); }
+.tracking-wider { letter-spacing: var(--tracking-wider); }
+
+.uppercase { text-transform: uppercase; }
+
+/* Chrome text — metallic gradient clipped to text, for the
+   wordmark and key headline moments only. A dark drop-shadow
+   lifts it off the matte-black surface and a hairline edge
+   keeps it crisp instead of washing out. */
+.text-chrome {
+  background: var(--chrome-gradient);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-stroke: 0.5px var(--chrome-text-stroke);
+  filter: drop-shadow(0 4px 28px var(--chrome-text-shadow));
+}
+
+.text-violet {
+  color: var(--text-accent);
+}
+
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary { color: var(--text-tertiary); }
