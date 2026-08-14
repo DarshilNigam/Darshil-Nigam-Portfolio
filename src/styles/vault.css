@@ -324,6 +324,20 @@
   cursor: pointer;
 }
 
+.project-overlay-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  pointer-events: none;
+}
+
 .project-overlay-media::before {
   content: '';
   position: absolute;

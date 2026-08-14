@@ -74,11 +74,27 @@ function FullscreenIcon() {
 function ProjectCard({ project, isHovered, onHoverStart, onHoverEnd, onOpen, delay }) {
   const reveal = useScrollReveal({ threshold: 0.15 });
   const videoUrl = resolveVideoUrl(project.video);
-  // Only mount the <video> at all while this specific card is the
-  // hovered one on a fine-pointer device — nothing loads or plays
-  // by default, and only one card can ever be true at a time since
-  // isHovered is derived from a single hoveredId in the parent.
   const showPreview = isHovered && videoUrl && canHoverPreview();
+  // idle: not hovering, nothing mounted/loading.
+  // loading: hover just started, video mounted, waiting for data.
+  // ready: enough buffered to actually be playing.
+  // error: the fetch/decode failed — treated as "no preview" below.
+  const [previewState, setPreviewState] = useState('idle');
+
+  // Reset every time hover starts/ends so a failed load can be
+  // retried next hover rather than staying broken forever, and so
+  // nothing lingers as "loading" after the card is no longer hovered.
+  useEffect(() => {
+    setPreviewState(showPreview ? 'loading' : 'idle');
+  }, [showPreview]);
+
+  const previewFailed = previewState === 'error';
+  const mediaLabel =
+    !videoUrl || previewFailed
+      ? 'Preview unavailable'
+      : previewState === 'loading'
+        ? 'Loading preview…'
+        : 'Click to preview';
 
   return (
     <div
@@ -99,7 +115,7 @@ function ProjectCard({ project, isHovered, onHoverStart, onHoverEnd, onOpen, del
           aria-haspopup="dialog"
         >
           <div className="project-card-media">
-            {showPreview && (
+            {showPreview && !previewFailed && (
               <video
                 key={videoUrl}
                 className="project-card-video"
@@ -108,7 +124,9 @@ function ProjectCard({ project, isHovered, onHoverStart, onHoverEnd, onOpen, del
                 loop
                 autoPlay
                 playsInline
-                preload="metadata"
+                preload="none"
+                onCanPlay={() => setPreviewState('ready')}
+                onError={() => setPreviewState('error')}
                 style={{
                   position: 'absolute',
                   inset: 0,
@@ -121,9 +139,7 @@ function ProjectCard({ project, isHovered, onHoverStart, onHoverEnd, onOpen, del
             <span className="project-card-play" aria-hidden="true">
               ▶
             </span>
-            <span className="project-card-media-label">
-              {videoUrl ? 'Click to preview' : 'Preview unavailable'}
-            </span>
+            <span className="project-card-media-label">{mediaLabel}</span>
           </div>
 
           <div className="project-card-meta">
@@ -143,6 +159,10 @@ function ProjectOverlay({ project, onClose }) {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  // loading until enough data has buffered to actually play; error
+  // falls back to the same placeholder used when there's no video.
+  const [videoState, setVideoState] = useState('loading');
+  const videoFailed = videoState === 'error';
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -199,7 +219,7 @@ function ProjectOverlay({ project, onClose }) {
           ← Back
         </button>
 
-        {videoUrl ? (
+        {videoUrl && !videoFailed ? (
           <div className="project-overlay-media project-overlay-media--has-video">
             <video
               key={videoUrl}
@@ -213,7 +233,13 @@ function ProjectOverlay({ project, onClose }) {
               onPlay={() => setIsPlaying(true)}
               onPause={() => setIsPlaying(false)}
               onEnded={() => setIsPlaying(false)}
+              onCanPlay={() => setVideoState('ready')}
+              onError={() => setVideoState('error')}
             />
+
+            {videoState === 'loading' && (
+              <span className="project-overlay-loading animate-fade-in">Loading preview…</span>
+            )}
 
             {/* Custom controls — always visible, never auto-hidden, so
                 they can't get stuck unreachable the way native browser
