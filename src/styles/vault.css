@@ -168,6 +168,21 @@
   transform: translateX(120%);
 }
 
+.project-card-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-in-out-soft);
+  z-index: 1;
+}
+
+.project-card-video.is-ready {
+  opacity: 1;
+}
+
 .project-card-play {
   position: absolute;
   top: 50%;
@@ -183,6 +198,7 @@
   align-items: center;
   justify-content: center;
   opacity: 0.85;
+  z-index: 2;
   transition: opacity var(--duration-base) var(--ease-out-expo),
     transform var(--duration-base) var(--ease-out-expo);
 }
@@ -196,6 +212,7 @@
   position: absolute;
   left: var(--space-3);
   bottom: var(--space-3);
+  z-index: 2;
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   letter-spacing: var(--tracking-wide);
@@ -257,7 +274,7 @@
 .project-overlay-panel {
   position: relative;
   width: 100%;
-  max-width: 860px;
+  max-width: 1040px;
   padding: var(--space-7);
   margin-block: var(--space-6);
 }
@@ -288,40 +305,71 @@
 }
 
 .project-overlay-media {
-  aspect-ratio: 9 / 16;
-  max-height: 75vh; /* fallback for browsers without dvh support */
-  max-height: 75dvh; /* accounts for mobile browser chrome so the top of the video isn't cut off */
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 65vh;
+  max-height: 65dvh;
   margin-inline: auto;
   border-radius: var(--radius-md);
-  background: linear-gradient(135deg, var(--surface-2) 0%, var(--surface-3) 50%, var(--surface-1) 100%);
+  background: #050508;
   border: 1px solid var(--chrome-800);
-  position: relative;
   overflow: hidden;
   margin-bottom: var(--space-6);
-}
-
-/* When an actual video is present, its own natural aspect ratio
-   governs the visible size (bounded by the rules on
-   .project-overlay-video below) instead of the placeholder's forced
-   9:16 box — this is what guarantees nothing is ever cropped. */
-.project-overlay-media--has-video {
-  aspect-ratio: auto;
-  max-height: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-2);
+}
+
+.project-overlay-media--has-video {
+  background: #000;
 }
 
 .project-overlay-video {
   display: block;
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: calc(100vh - 140px); /* fallback for browsers without dvh support */
-  max-height: calc(100dvh - 140px); /* accounts for mobile browser chrome */
+  width: 100%;
+  height: 100%;
+  max-height: 65vh;
+  max-height: 65dvh;
   object-fit: contain;
   cursor: pointer;
+  background: #000;
+}
+
+.project-overlay-center-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--glass-border-accent);
+  background: rgba(8, 8, 10, 0.65);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  opacity: 0.92;
+  transition: transform var(--duration-base) var(--ease-out-expo),
+    opacity var(--duration-base) var(--ease-out-expo),
+    background var(--duration-base) var(--ease-out-expo);
+  z-index: 2;
+  cursor: pointer;
+}
+
+.project-overlay-center-play svg {
+  width: 24px;
+  height: 24px;
+  margin-left: 2px;
+}
+
+.project-overlay-center-play:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+  opacity: 1;
+  background: rgba(138, 79, 255, 0.35);
+  border-color: var(--text-accent);
 }
 
 .project-overlay-loading {
@@ -349,6 +397,7 @@
     transparent 2px,
     transparent 16px
   );
+  pointer-events: none;
 }
 
 /* Custom video controls — replaces native <video controls>, which

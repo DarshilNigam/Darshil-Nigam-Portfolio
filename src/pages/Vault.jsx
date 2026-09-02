@@ -71,21 +71,49 @@ function FullscreenIcon() {
   );
 }
 
-function ProjectCard({ project, isHovered, onHoverStart, onHoverEnd, onOpen, delay }) {
+function ProjectCard({ project, isPreviewActive, onHoverStart, onHoverEnd, onOpen, delay }) {
   const reveal = useScrollReveal({ threshold: 0.15 });
   const videoUrl = resolveVideoUrl(project.video);
-  const showPreview = isHovered && videoUrl && canHoverPreview();
-  // idle: not hovering, nothing mounted/loading.
-  // loading: hover just started, video mounted, waiting for data.
-  // ready: enough buffered to actually be playing.
-  // error: the fetch/decode failed — treated as "no preview" below.
+  const showPreview = isPreviewActive && videoUrl && canHoverPreview();
+  const videoRef = useRef(null);
+
+  // idle: not hovering or before debounce, nothing mounted/loading.
+  // loading: debounced hover started, video mounted, waiting for data.
+  // ready: enough buffered to be playing smoothly.
+  // error: fetch or decode failed — gracefully falls back to placeholder.
   const [previewState, setPreviewState] = useState('idle');
 
-  // Reset every time hover starts/ends so a failed load can be
-  // retried next hover rather than staying broken forever, and so
-  // nothing lingers as "loading" after the card is no longer hovered.
   useEffect(() => {
-    setPreviewState(showPreview ? 'loading' : 'idle');
+    if (showPreview) {
+      setPreviewState('loading');
+    } else {
+      setPreviewState('idle');
+    }
+  }, [showPreview]);
+
+  // Clean up HTML5 video resources and abort background downloads on leave/unmount
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!showPreview && video) {
+      try {
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+      } catch (e) {
+        // Safe fallback
+      }
+    }
+    return () => {
+      if (video) {
+        try {
+          video.pause();
+          video.removeAttribute('src');
+          video.load();
+        } catch (e) {
+          // Safe fallback
+        }
+      }
+    };
   }, [showPreview]);
 
   const previewFailed = previewState === 'error';
@@ -110,30 +138,26 @@ function ProjectCard({ project, isHovered, onHoverStart, onHoverEnd, onOpen, del
           interactive
           className="project-card"
           onClick={() => onOpen(project)}
-          onMouseEnter={() => canHoverPreview() && onHoverStart()}
+          onMouseEnter={onHoverStart}
           onMouseLeave={onHoverEnd}
           aria-haspopup="dialog"
         >
           <div className="project-card-media">
             {showPreview && !previewFailed && (
               <video
+                ref={videoRef}
                 key={videoUrl}
-                className="project-card-video"
+                className={`project-card-video ${previewState === 'ready' ? 'is-ready' : ''}`}
                 src={videoUrl}
                 muted
                 loop
                 autoPlay
                 playsInline
-                preload="none"
+                preload="auto"
                 onCanPlay={() => setPreviewState('ready')}
+                onPlaying={() => setPreviewState('ready')}
+                onWaiting={() => setPreviewState('loading')}
                 onError={() => setPreviewState('error')}
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                }}
               />
             )}
             <span className="project-card-play" aria-hidden="true">
@@ -158,11 +182,20 @@ function ProjectOverlay({ project, onClose }) {
   const videoUrl = resolveVideoUrl(project.video);
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
-  // loading until enough data has buffered to actually play; error
-  // falls back to the same placeholder used when there's no video.
+  const [isMuted, setIsMuted] = useState(false);
+
+  // loading | buffering | ready | error
   const [videoState, setVideoState] = useState('loading');
   const videoFailed = videoState === 'error';
+
+  useEffect(() => {
+    setIsPlaying(false);
+    setVideoState('loading');
+    const v = videoRef.current;
+    if (v && v.readyState >= 1) {
+      setVideoState('ready');
+    }
+  }, [project.id]);
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -173,12 +206,14 @@ function ProjectOverlay({ project, onClose }) {
     return () => {
       document.body.style.overflow = '';
       window.removeEventListener('keydown', onKeyDown);
-      // Stop and reset playback the instant the overlay closes/unmounts
-      // — only one video should ever be able to play at a time.
       const v = videoRef.current;
       if (v) {
-        v.pause();
-        v.currentTime = 0;
+        try {
+          v.pause();
+          v.currentTime = 0;
+        } catch (e) {
+          // Safe fallback
+        }
       }
     };
   }, [onClose]);
@@ -187,21 +222,41 @@ function ProjectOverlay({ project, onClose }) {
     const v = videoRef.current;
     if (!v) return;
     if (v.paused) {
-      v.play().catch(() => {});
-      setIsPlaying(true);
+      const playPromise = v.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+            setVideoState('ready');
+          })
+          .catch((err) => {
+            console.warn('Play error:', err);
+          });
+      }
     } else {
       v.pause();
       setIsPlaying(false);
     }
   };
 
-  const toggleMute = () => setIsMuted((m) => !m);
+  const toggleMute = () => {
+    const v = videoRef.current;
+    const nextMuted = !isMuted;
+    setIsMuted(nextMuted);
+    if (v) {
+      v.muted = nextMuted;
+    }
+  };
 
   const handleFullscreen = () => {
     const v = videoRef.current;
     if (!v) return;
     if (v.requestFullscreen) v.requestFullscreen();
     else if (v.webkitRequestFullscreen) v.webkitRequestFullscreen();
+  };
+
+  const markReady = () => {
+    setVideoState((prev) => (prev === 'error' ? 'error' : 'ready'));
   };
 
   return (
@@ -222,7 +277,7 @@ function ProjectOverlay({ project, onClose }) {
         {videoUrl && !videoFailed ? (
           <div className="project-overlay-media project-overlay-media--has-video">
             <video
-              key={videoUrl}
+              key={project.id}
               ref={videoRef}
               className="project-overlay-video"
               src={videoUrl}
@@ -230,20 +285,40 @@ function ProjectOverlay({ project, onClose }) {
               playsInline
               preload="metadata"
               onClick={togglePlay}
-              onPlay={() => setIsPlaying(true)}
+              onLoadedMetadata={markReady}
+              onLoadedData={markReady}
+              onCanPlay={markReady}
+              onCanPlayThrough={markReady}
+              onPlay={() => {
+                setIsPlaying(true);
+                setVideoState('ready');
+              }}
+              onPlaying={() => {
+                setIsPlaying(true);
+                setVideoState('ready');
+              }}
               onPause={() => setIsPlaying(false)}
               onEnded={() => setIsPlaying(false)}
-              onCanPlay={() => setVideoState('ready')}
+              onWaiting={() => setVideoState('buffering')}
               onError={() => setVideoState('error')}
             />
 
-            {videoState === 'loading' && (
+            {(videoState === 'loading' || videoState === 'buffering') && (
               <span className="project-overlay-loading animate-fade-in">Loading preview…</span>
             )}
 
-            {/* Custom controls — always visible, never auto-hidden, so
-                they can't get stuck unreachable the way native browser
-                controls were. */}
+            {!isPlaying && videoState !== 'loading' && (
+              <button
+                type="button"
+                className="project-overlay-center-play"
+                onClick={togglePlay}
+                aria-label="Play video"
+              >
+                <PlayIcon />
+              </button>
+            )}
+
+            {/* Custom controls — always visible, never auto-hidden */}
             <div className="project-overlay-controls">
               <button
                 type="button"
@@ -272,7 +347,9 @@ function ProjectOverlay({ project, onClose }) {
             </div>
           </div>
         ) : (
-          <div className="project-overlay-media" aria-hidden="true" />
+          <div className="project-overlay-media project-overlay-media--unavailable" aria-hidden="true">
+            <span className="project-overlay-loading animate-fade-in">Preview unavailable</span>
+          </div>
         )}
 
         <div className="project-overlay-header">
@@ -300,15 +377,16 @@ function ProjectOverlay({ project, onClose }) {
 /**
  * Vault — "THE VAULT" project showcase page, mounted at /vault.
  * Self-contained: styles/vault.css is imported only here, data
- * lives in data/projects.js (placeholder), and it reuses the
- * existing GlassPanel / AtmosphereGlow / card-frame / reveal system.
+ * lives in data/projects.js, and it reuses the existing GlassPanel /
+ * AtmosphereGlow / card-frame / reveal system.
  */
 export default function Vault() {
   const [activeFilter, setActiveFilter] = useState('ALL');
   const [selectedProject, setSelectedProject] = useState(null);
-  // Single source of truth for which card (if any) may show a live
-  // preview — guarantees only one video plays in the grid at a time.
-  const [hoveredId, setHoveredId] = useState(null);
+
+  // Single active preview ID controlled with debounce to avoid spurious network bursts
+  const [activePreviewId, setActivePreviewId] = useState(null);
+  const hoverTimerRef = useRef(null);
 
   const filtered = useMemo(
     () =>
@@ -318,8 +396,40 @@ export default function Vault() {
     [activeFilter]
   );
 
+  // Clear hover debounce timers on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimerRef.current) {
+        clearTimeout(hoverTimerRef.current);
+      }
+    };
+  }, []);
+
+  const handleHoverStart = (projectId) => {
+    if (!canHoverPreview()) return;
+    if (hoverTimerRef.current) {
+      clearTimeout(hoverTimerRef.current);
+    }
+    // 200ms debounce: rapidly sweeping the mouse across cards will not trigger video fetches
+    hoverTimerRef.current = setTimeout(() => {
+      setActivePreviewId(projectId);
+    }, 200);
+  };
+
+  const handleHoverEnd = (projectId) => {
+    if (hoverTimerRef.current) {
+      clearTimeout(hoverTimerRef.current);
+      hoverTimerRef.current = null;
+    }
+    setActivePreviewId((current) => (current === projectId ? null : current));
+  };
+
   const openProject = (project) => {
-    setHoveredId(null);
+    if (hoverTimerRef.current) {
+      clearTimeout(hoverTimerRef.current);
+      hoverTimerRef.current = null;
+    }
+    setActivePreviewId(null);
     setSelectedProject(project);
   };
 
@@ -360,9 +470,9 @@ export default function Vault() {
               <ProjectCard
                 key={project.id}
                 project={project}
-                isHovered={hoveredId === project.id}
-                onHoverStart={() => setHoveredId(project.id)}
-                onHoverEnd={() => setHoveredId((id) => (id === project.id ? null : id))}
+                isPreviewActive={activePreviewId === project.id}
+                onHoverStart={() => handleHoverStart(project.id)}
+                onHoverEnd={() => handleHoverEnd(project.id)}
                 onOpen={openProject}
                 delay={i * 70}
               />
