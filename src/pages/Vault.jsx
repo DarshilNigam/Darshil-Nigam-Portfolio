@@ -30,8 +30,13 @@ function resolvePosterUrl(filename) {
   if (!filename) return null;
   const baseName = filename.replace(/\.[^.]+$/, '');
   const match = Object.entries(posterModules).find(([path]) => {
-    const file = path.split('/').pop().replace(/\.[^.]+$/, '');
-    return file === baseName;
+    const normalized = path.replace(/\\/g, '/');
+    return (
+      normalized.endsWith(`/${baseName}.webp`) ||
+      normalized.endsWith(`/${baseName}.jpg`) ||
+      normalized.endsWith(`/${baseName}.png`) ||
+      normalized.endsWith(`/${baseName}.jpeg`)
+    );
   });
   return match ? match[1] : null;
 }
