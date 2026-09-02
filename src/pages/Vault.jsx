@@ -21,6 +21,21 @@ function resolveVideoUrl(filename) {
   return match ? match[1] : null;
 }
 
+const posterModules = import.meta.glob('../assets/video-posters/*.{webp,jpg,png}', {
+  eager: true,
+  import: 'default',
+});
+
+function resolvePosterUrl(filename) {
+  if (!filename) return null;
+  const baseName = filename.replace(/\.[^.]+$/, '');
+  const match = Object.entries(posterModules).find(([path]) => {
+    const file = path.split('/').pop().replace(/\.[^.]+$/, '');
+    return file === baseName;
+  });
+  return match ? match[1] : null;
+}
+
 // Desktop-only, fine-pointer devices get the hover preview. Touch/
 // coarse-pointer devices never trigger it — checked at hover time,
 // no extra state needed.
@@ -74,6 +89,7 @@ function FullscreenIcon() {
 function ProjectCard({ project, isPreviewActive, onHoverStart, onHoverEnd, onOpen, delay }) {
   const reveal = useScrollReveal({ threshold: 0.15 });
   const videoUrl = resolveVideoUrl(project.video);
+  const posterUrl = resolvePosterUrl(project.video);
   const showPreview = isPreviewActive && videoUrl && canHoverPreview();
   const videoRef = useRef(null);
 
@@ -143,6 +159,15 @@ function ProjectCard({ project, isPreviewActive, onHoverStart, onHoverEnd, onOpe
           aria-haspopup="dialog"
         >
           <div className="project-card-media">
+            {posterUrl && (
+              <img
+                src={posterUrl}
+                alt={project.title}
+                className="project-card-poster"
+                loading="lazy"
+                decoding="async"
+              />
+            )}
             {showPreview && !previewFailed && (
               <video
                 ref={videoRef}
@@ -180,6 +205,7 @@ function ProjectCard({ project, isPreviewActive, onHoverStart, onHoverEnd, onOpe
 
 function ProjectOverlay({ project, onClose }) {
   const videoUrl = resolveVideoUrl(project.video);
+  const posterUrl = resolvePosterUrl(project.video);
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -276,10 +302,18 @@ function ProjectOverlay({ project, onClose }) {
 
         {videoUrl && !videoFailed ? (
           <div className="project-overlay-media project-overlay-media--has-video">
+            {posterUrl && (
+              <img
+                src={posterUrl}
+                alt={project.title}
+                className={`project-overlay-poster ${videoState === 'ready' && isPlaying ? 'is-faded' : ''}`}
+              />
+            )}
+
             <video
               key={project.id}
               ref={videoRef}
-              className="project-overlay-video"
+              className={`project-overlay-video ${videoState === 'ready' ? 'is-ready' : ''}`}
               src={videoUrl}
               muted={isMuted}
               playsInline
@@ -348,6 +382,13 @@ function ProjectOverlay({ project, onClose }) {
           </div>
         ) : (
           <div className="project-overlay-media project-overlay-media--unavailable" aria-hidden="true">
+            {posterUrl && (
+              <img
+                src={posterUrl}
+                alt={project.title}
+                className="project-overlay-poster"
+              />
+            )}
             <span className="project-overlay-loading animate-fade-in">Preview unavailable</span>
           </div>
         )}
